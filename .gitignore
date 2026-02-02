@@ -1,0 +1,10 @@
+# Ignore the build folders
+build/
+bin/
+executable/Debug/
+executable/Release/
+
+# Ignore VS Code specific local settings
+.vscode/
+.cache/
+
