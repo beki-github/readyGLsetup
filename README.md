@@ -22,7 +22,7 @@ Clone the Repo:
 
 Bash
 
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+git clone https://github.com/beki-github/readyGLsetup
 Open in VS Code: File > Open Folder... and select the project root.
 
 Configure & Build:
