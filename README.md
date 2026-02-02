@@ -1,9 +1,9 @@
 # readyGLsetup: Zero-Config OpenGL Environment
 
-"Skip the linker errors. Start coding in 60 seconds."
+"NO MORE "IT WORKS ON MY MACHINE"
 ## Why I Built This
 Setting up a C++ graphics environment is notoriously frustrating. Between linking static libraries, managing DLLs, and configuring CMake paths, many beginners quit before they even draw their first triangle.
-I created this integrated development environment so that anyone can clone this repository and immediately start working in a lightweight VS Code setup. No manual configuration, no "missing .dll" errors—just the code.
+I created this integrated development environment so that anyone can clone this repository and immediately start working in a lightweight VS Code setup. No manual configuration, no "missing .dll" errors just the code.
 
 ## Key Features
 Pre-linked for GLFW and GLAD.
