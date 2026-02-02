@@ -1,6 +1,6 @@
 # readyGLsetup: Zero-Config OpenGL Environment
 
-"NO MORE "IT WORKS ON MY MACHINE"
+NO MORE "IT WORKS ON MY MACHINE"
 ## Why I Built This
 Setting up a C++ graphics environment is notoriously frustrating. Between linking static libraries, managing DLLs, and configuring CMake paths, many beginners quit before they even draw their first triangle.
 I created this integrated development environment so that anyone can clone this repository and immediately start working in a lightweight VS Code setup. No manual configuration, no "missing .dll" errors just the code.
@@ -14,6 +14,7 @@ Clean Deployment: Includes a pre-configured .gitignore to keep your repo free of
 ## Quick Start
 # 1. Prerequisites
 windows: VS Code that's already configured for c++ and CMake Tools extensions.
+
 Linux: vs code with CMake tools and build-essential cmake libglfw3-dev packages.
 
 # 2. Launching 
