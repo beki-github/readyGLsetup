@@ -16,7 +16,7 @@ Clean Deployment: Includes a pre-configured .gitignore to keep your repo free of
 windows: VS Code that's already configured for c++ and CMake Tools extensions.
 Linux: vs code with CMake tools and build-essential cmake libglfw3-dev packages.
 
-# 3. Launching 
+# 2. Launching 
 Clone the Repo:
 
 Bash
@@ -25,13 +25,8 @@ git clone https://github.com/beki-github/readyGLsetup
 Open in VS Code: File > Open Folder... and select the project root.
 
 Configure & Build:
-
 Click "Select a Kit" in the bottom status bar and choose Visual Studio Community 2022 Release - amd64 (x64).
-
 Press F7 to build or click the Build button.
 
 Run:
-
 Click the Play button in the status bar.
-├── executable/        # Final binaries (organized by Debug/Release)
-└── CMakeLists.txt     # The "brain" of the project setup
