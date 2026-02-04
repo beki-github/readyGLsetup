@@ -31,6 +31,8 @@ add_executable(
     src/EBO.cpp
     src/VAO.h
     src/VAO.cpp
+    src/stb.cpp
+ 
 )
 
 
