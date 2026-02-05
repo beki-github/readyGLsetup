@@ -1,6 +1,8 @@
 
 <h1 align="center">readyGLsetup</h1>
 
+![image alt](https://github.com/beki-github/readyGLsetup/blob/d9ca29622e9976226ec7c4816c6eb2d172d603d9/Screenshot%202026-02-05%20185130.png)
+
 NO MORE "IT WORKS ON MY MACHINE"
 ## Why I Built This
 Setting up a C++ graphics environment is notoriously frustrating. Between linking static libraries, managing DLLs, and configuring CMake paths, many beginners quit before they even draw their first triangle.
