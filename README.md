@@ -18,12 +18,12 @@ Cross-Platform Ready: Supports Windows (MSVC/MinGW) and Linux (GCC) via a unifie
 Clean Deployment: it enables you to share your executable by sharing the executable file. 
 
 ## Quick Start
-# 1. Prerequisites
+### 1. Prerequisites
 windows: VS Code that's already configured for c++ and CMake Tools extensions.
 
 Linux: vs code with CMake tools and build-essential cmake libglfw3-dev packages.
 
-# 2. Launching 
+### 2. Launching 
 Clone the Repo:
 
 Bash
@@ -33,7 +33,7 @@ Open in VS Code: File > Open Folder... and select the project root.
 
 Configure & Build:
 Click "Select a Kit" in the bottom status bar and choose Visual Studio Community 2022 Release - amd64 (x64).
+(ctrl+shift+p then search for cmake kit)
 Press F7 to build or click the Build button.
-
 Run:
 Click the Play button in the status bar.
