@@ -7,16 +7,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/executable)
 # creates an empty shader directory inside the executable directory 
 #file(MAKE_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders")
+project(test VERSION 1.0)
+# copy the shader folder to the executable folder for portablility IF it doesn't exist there already
+
 
 if(WIN32)
 #if the machine was on windows
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
   find_package(OpenGL REQUIRED)
-  find_package(glfw3 REQUIRED)
+  find_package(GLFW3 REQUIRED)
 else()
 # if the machine was running linux 
   find_package(OpenGL REQUIRED)
-  find_package(glfw3 REQUIRED)
+  find_package(GLFW3 REQUIRED)
 endif()
 
 add_executable( 
@@ -32,6 +35,8 @@ add_executable(
     src/VAO.h
     src/VAO.cpp
     src/stb.cpp
+    src/Texture.h
+    src/Texture.cpp
  
 )
 
@@ -39,6 +44,12 @@ add_executable(
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/dependencies)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders" 
+    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release/shaders"
+    COMMENT "Syncing shaders to executable directory..."
+)
 
 if (WIN32)
   target_link_libraries(${PROJECT_NAME} ${GLFW3_LIBRARY} OpenGL::GL)
@@ -56,11 +67,5 @@ if(WIN32)
     )
 endif()
 
-# copy the shader folder to the executable folder for portablility IF it doesn't exist there already
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_CURRENT_SOURCE_DIR}/shaders" 
-    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release/shaders"
-    COMMENT "Syncing shaders to executable directory..."
-)
+
 

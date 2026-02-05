@@ -1,24 +1,27 @@
-#ifndef SHADER_CLASS_H
-#define SHADER_CLASS_H
+#pragma once
+#ifndef SHADER_H
+#define SHADER_H
+//
+#include<glad/glad.h>
+#include<iostream>
+#include<string>
+#include<fstream>
+#include<sstream>
+//glm setup
 
-#include <iostream>
-#include <glad/glad.h>
-#include <fstream>
-#include <sstream>
-#include <cerrno>
-
-std::string get_file_content(const char *filename);
 
 class Shader {
-    private:
-      int success;
-      char infoLog[512];
-    public:
-      GLuint ID;//a reference 
-      Shader(const char *vertexShaderFile, const char *fragmentShaderFile);
-
-      void Activate();
-      void Delete();
-
+public:
+	unsigned int ID;
+	Shader(const char* vertexPath, const char* fragPath);
+	void use();
+	void setBool(const std::string& name, bool value) const;
+	void setInt(const std::string& name, int value) const;
+	void setFloat(const std::string& name, float value) const;
+	
+private:
+	void checkCompilationError(unsigned int shader, const std::string& type);
 };
+
+
 #endif
