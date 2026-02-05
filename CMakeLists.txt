@@ -37,6 +37,7 @@ add_executable(
     src/stb.cpp
     src/Texture.h
     src/Texture.cpp
+    src/Debugger.h
  
 )
 

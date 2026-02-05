@@ -9,6 +9,7 @@
 #include "EBO.h"
 #include "Texture.h"
 #include "shaderClass.h"
+#include "Debugger.h"
 
 
 GLfloat vertices[] = {
@@ -26,18 +27,18 @@ GLuint indecies[]={
 
 
 
-
-
 int main(){
     //intalize glfw 
     glfwInit();
     std::cout<<"Current working directory: "<< std::filesystem::current_path()<<std::endl;
     //specifying which version of opengl version we are using the minor and major 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3); 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,4); 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
     //specfiying which profile it uses, set of functions 
     //we are only using modern functions only!!!
     glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
+    //for debugging from learnopengl.com
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
     //now to the window itself 
 
@@ -52,6 +53,9 @@ int main(){
     glfwMakeContextCurrent(window);
 
     gladLoadGL();
+    EnableModernDebugging();
+
+
     glViewport(0,0,480,480);
      
     VAO VAO1;
@@ -74,7 +78,7 @@ int main(){
     Shader shaderProgram3("shaders/shader.vert","shaders/shader.frag");
 
 
-    Texture popCat(imgPath, GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    Texture popCat(imgPath, GL_TEXTURE_2D, GL_TEXTURE_2D, GL_UNSIGNED_BYTE);
 	popCat.texUnit(shaderProgram3, "tex0", 0);
     popCat.Bind();
 
