@@ -1,4 +1,5 @@
-# readyGLsetup: Zero-Config OpenGL Environment
+
+<h1 align="center">readyGLsetup</h1>
 
 NO MORE "IT WORKS ON MY MACHINE"
 ## Why I Built This
