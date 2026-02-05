@@ -12,11 +12,11 @@
 
 
 GLfloat vertices[] = {
-    // coordinates         //colors
-    -0.5f, -0.5f, 0.0f,   1.0f,0.0f,0.0f,
-     0.5f, -0.5f, 0.0f,   1.0f,0.0f,0.0f,
-     0.5f,  0.5f, 0.0f,   1.0f,0.0f,0.0f,
-    -0.5f,  0.5f, 0.0f,   1.0f,0.0f,0.0f
+    // coordinates         //colors           //texCoordinates
+    -0.5f, -0.5f, 0.0f,   0.5f,0.0f,0.0f,     0.0f,0.0f,
+     0.5f, -0.5f, 0.0f,   0.5f,0.0f,0.0f,     0.0f,1.0f,
+     0.5f,  0.5f, 0.0f,   0.5f,0.0f,0.0f,     1.0f,1.0f,
+    -0.5f,  0.5f, 0.0f,   0.5f,0.0f,0.0f,     1.0f,0.0f
 }; 
 
 GLuint indecies[]={
@@ -60,8 +60,11 @@ int main(){
     VBO VBO1(vertices,sizeof(vertices));
     EBO EBO1(indecies,sizeof(indecies));
     
-    VAO1.linkAttrib(VBO1,0,3,GL_FLOAT,6*sizeof(float),(void*)0);
-    VAO1.linkAttrib(VBO1,1,3,GL_FLOAT,6*sizeof(float),(void*)(sizeof(float)*3));
+    VAO1.linkAttrib(VBO1,0,3,GL_FLOAT,8*sizeof(float),(void*)0);
+    VAO1.linkAttrib(VBO1,1,3,GL_FLOAT,8*sizeof(float),(void*)(sizeof(float)*3));
+    VAO1.linkAttrib(VBO1,1,2,GL_FLOAT,8*sizeof(float),(void*)(sizeof(float)*6));
+    
+
 
     VAO1.Unbind();
     VBO1.Unbind();
@@ -69,12 +72,43 @@ int main(){
 
 
     Shader shaderProgram3("shaders/shader.vert","shaders/shader.frag");
+
+    // time for textures 
+    
+    int imgWidth,imgHeight,numCloch;
+
+    unsigned char * byte =stbi_load("assets/power.png",&imgWidth,&imgHeight,&numCloch,0);
+    if (!byte) {
+    std::cout << "FAILED TO LOAD TEXTURE: Check your file path!" << std::endl;
+    return -1; // Stop the crash and see the error
+}
+
+
+    GLuint texture;
+    glGenTextures(1,&texture);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D,texture);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+
+    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,imgWidth,imgHeight,0,GL_RGBA,GL_UNSIGNED_BYTE,byte);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(byte);
+    glBindTexture(GL_TEXTURE_2D,texture);
+
+    GLuint tex0 = glad_glGetUniformLocation(shaderProgram3.ID,"tex0");
+    shaderProgram3.Activate();
+    glUniform1i(tex0,0);
+
     while(!glfwWindowShouldClose(window)){
 
         glClearColor(0.039f, 0.059f, 0.122f,0.3f);
         glClear(GL_COLOR_BUFFER_BIT);
         shaderProgram3.Activate();
         VAO1.Bind();
+        glBindTexture(GL_TEXTURE_2D,texture);
         glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
         
         glfwSwapBuffers(window);
@@ -86,6 +120,9 @@ int main(){
 
     
     shaderProgram3.Delete();
+    VAO1.Delete();
+    VBO1.Delete();
+    EBO1.Delete();
     
 
     //terminate glfw 
