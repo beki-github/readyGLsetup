@@ -8,9 +8,12 @@ I created this integrated development environment so that anyone can clone this 
 
 ## Key Features
 Pre-linked for GLFW and GLAD.
+
 Automated Asset Pipeline: Shaders are automatically copied from the source to the build directory on every compile.
+
 Cross-Platform Ready: Supports Windows (MSVC/MinGW) and Linux (GCC) via a unified CMake script.
-Clean Deployment: Includes a pre-configured .gitignore to keep your repo free of "ghost" build files and cache errors.
+
+Clean Deployment: it enables you to share your executable by sharing the executable file. 
 
 ## Quick Start
 # 1. Prerequisites
