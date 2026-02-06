@@ -2,7 +2,9 @@
 #include <filesystem>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "VAO.h"
 #include "VBO.h"
@@ -41,8 +43,9 @@ int main(){
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
     //now to the window itself 
-
-    GLFWwindow *window = glfwCreateWindow(480,480,"test",NULL,NULL);
+    GLuint windowWidth=800;
+    GLuint windowHeight=600;
+    GLFWwindow *window = glfwCreateWindow(windowWidth,windowHeight,"test",NULL,NULL);
     if(window==NULL){
         std::cout<<"failed to open the window"<<std::endl;
         glfwTerminate();
@@ -56,7 +59,7 @@ int main(){
     EnableModernDebugging();
 
 
-    glViewport(0,0,480,480);
+    glViewport(0,0,windowWidth,windowHeight);
      
     VAO VAO1;
     VAO1.Bind();
@@ -73,25 +76,49 @@ int main(){
     VAO1.Unbind();
     VBO1.Unbind();
     
-    const char* imgPath = "assets/bricks.jpg";
+    
 
     Shader shaderProgram3("shaders/shader.vert","shaders/shader.frag");
 
-
-    Texture popCat(imgPath, GL_TEXTURE_2D, GL_TEXTURE_2D, GL_UNSIGNED_BYTE);
+    const char* imgPath = "assets/bricks.jpg";
+    Texture popCat(imgPath, GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
 	popCat.texUnit(shaderProgram3, "tex0", 0);
     popCat.Bind();
 
+
+  
+    glm::mat4 view = glm::mat4(1.0f);
+    glm::mat4 projection;
+
+    
+    view = glm::translate(view,glm::vec3(0.0f,0.0f,-3.0f));
+    projection = glm::perspective(glm::radians(45.0f),(float)windowWidth/(float)windowHeight,0.1f,100.0f);
+
+    shaderProgram3.use();
+    
+    shaderProgram3.setMat4(1,GL_FALSE,view);
+    shaderProgram3.setMat4(2,GL_FALSE,projection);
+
+    
     while(!glfwWindowShouldClose(window)){
 
         glClearColor(0.039f, 0.059f, 0.122f,0.3f);
         glClear(GL_COLOR_BUFFER_BIT);
-        shaderProgram3.use();
+        
         
         VAO1.Bind();
-       
+       for(int i=1;i<8;i++){
+        for(int j=1;j<24;j++){ 
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model,glm::radians(-55.0f),glm::vec3(1.0f,0.0f,0.0f));
+        model =glm::translate(model,glm::vec3((float)i-4,(float)j-1,-2.0f));
+        shaderProgram3.setMat4(0,GL_FALSE,model);
         glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+        }
+       }
         
+        
+        //
         glfwSwapBuffers(window);
 
         glfwPollEvents();

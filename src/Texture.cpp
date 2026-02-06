@@ -1,4 +1,4 @@
-#include"Texture.h" // STB implementation defined in stb.cpp to avoid duplicate symbol definitions
+#include"Texture.h"
 
 Texture::Texture(const char* imagePath, GLenum texType, GLenum slot, GLenum pixelType)
 {
