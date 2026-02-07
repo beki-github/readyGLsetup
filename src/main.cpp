@@ -12,21 +12,37 @@
 #include "Texture.h"
 #include "shaderClass.h"
 #include "Debugger.h"
+jgtn
+void processInput(GLFWwindow* window, float currentTime);
+//gloabal variable intalization 
+float lastFrame=0.0f;
+float deltaTime;
 
-
-GLfloat vertices[] = {
-    // coordinates          //colors           //texCoordinates
-    -0.5f, -0.5f, 0.0f,    1.0f, 1.0f, 1.0f,   0.0f, 0.0f, // Bottom-Left
-     0.5f, -0.5f, 0.0f,    1.0f, 1.0f, 1.0f,   1.0f, 0.0f, // Bottom-Right
-     0.5f,  0.5f, 0.0f,    1.0f, 1.0f, 1.0f,   1.0f, 1.0f, // Top-Right
-    -0.5f,  0.5f, 0.0f,    1.0f, 1.0f, 1.0f,   0.0f, 1.0f  // Top-Left
+// Vertices coordinates
+GLfloat vertices[] =
+{ //     COORDINATES     /        COLORS      /   TexCoord  //
+	-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	0.0f, 0.0f,
+	-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	5.0f, 0.0f,
+	 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	0.0f, 0.0f,
+	 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	5.0f, 0.0f,
+	 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	2.5f, 5.0f
 };
 
-GLuint indecies[]={
-    0,1,2,
-    0,2,3
+// Indices for vertices order
+GLuint indices[] =
+{
+	0, 1, 2,
+	0, 2, 3,
+	0, 1, 4,
+	1, 2, 4,
+	2, 3, 4,
+	3, 0, 4
 };
 
+//global intial states for the camera
+glm::vec3 cameraPos= glm::vec3(0.0f,0.25f,6.0f);
+glm::vec3 cameraTar = glm::vec3(0.0f,0.0f,-1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f,1.0f,0.0f);
 
 
 int main(){
@@ -65,7 +81,7 @@ int main(){
     VAO1.Bind();
 
     VBO VBO1(vertices,sizeof(vertices));
-    EBO EBO1(indecies,sizeof(indecies));
+    EBO EBO1(indices,sizeof(indices));
     
     VAO1.linkAttrib(VBO1,0,3,GL_FLOAT,8*sizeof(float),(void*)0);
     VAO1.linkAttrib(VBO1,1,3,GL_FLOAT,8*sizeof(float),(void*)(sizeof(float)*3));
@@ -86,37 +102,37 @@ int main(){
     popCat.Bind();
 
 
-  
+    glm::mat4 model=glm::mat4(1.0f);
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 projection;
 
-    
-    view = glm::translate(view,glm::vec3(0.0f,0.0f,-3.0f));
+    model=glm::translate(model,glm::vec3(0.0f,0.0f,0.0f));
+   
     projection = glm::perspective(glm::radians(45.0f),(float)windowWidth/(float)windowHeight,0.1f,100.0f);
 
     shaderProgram3.use();
     
-    shaderProgram3.setMat4(1,GL_FALSE,view);
+    
+
+    //trying to implement a camera!!
+   
+    
     shaderProgram3.setMat4(2,GL_FALSE,projection);
 
+    
+    glEnable(GL_DEPTH_TEST);
     
     while(!glfwWindowShouldClose(window)){
 
         glClearColor(0.039f, 0.059f, 0.122f,0.3f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        
-        
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+        processInput(window,glfwGetTime());
         VAO1.Bind();
-       for(int i=1;i<8;i++){
-        for(int j=1;j<24;j++){ 
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model,glm::radians(-55.0f),glm::vec3(1.0f,0.0f,0.0f));
-        model =glm::translate(model,glm::vec3((float)i-4,(float)j-1,-2.0f));
+        model=glm::rotate(model,glm::radians(0.004f),glm::vec3(0.0f,1.0f,0.0f));
         shaderProgram3.setMat4(0,GL_FALSE,model);
-        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
-        }
-       }
-        
+        view=glm::lookAt(cameraPos,cameraPos+cameraTar,cameraUp);
+        shaderProgram3.setMat4(1,GL_FALSE,view);
+        glDrawElements(GL_TRIANGLES,sizeof(indices)/sizeof(int),GL_UNSIGNED_INT,0);
         
         //
         glfwSwapBuffers(window);
@@ -138,4 +154,21 @@ int main(){
     glfwDestroyWindow(window);
 
     return 0;
+}
+void processInput(GLFWwindow *window, float currentFrame)
+{     
+    deltaTime=currentFrame-lastFrame;
+    lastFrame=currentFrame;
+    float cameraSpeed=2.5*deltaTime;
+
+
+    if(glfwGetKey(window,GLFW_KEY_UP)==GLFW_PRESS)
+      cameraPos+=cameraSpeed*cameraTar;
+    if(glfwGetKey(window,GLFW_KEY_DOWN)==GLFW_PRESS)
+      cameraPos-=cameraSpeed*cameraTar;
+    if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+      cameraPos-= glm::normalize(glm::cross(cameraTar, cameraUp)) *cameraSpeed;
+    if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+      cameraPos += glm::normalize(glm::cross(cameraTar, cameraUp)) *cameraSpeed;
+
 }
