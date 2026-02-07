@@ -11,9 +11,13 @@
 #include "EBO.h"
 #include "Texture.h"
 #include "shaderClass.h"
+#include "Camera.h"
 #include "Debugger.h"
-jgtn
+
+
 void processInput(GLFWwindow* window, float currentTime);
+void mouse_callback(GLFWwindow* window, double xPos, double yPos);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //gloabal variable intalization 
 float lastFrame=0.0f;
 float deltaTime;
@@ -41,9 +45,17 @@ GLuint indices[] =
 
 //global intial states for the camera
 glm::vec3 cameraPos= glm::vec3(0.0f,0.25f,6.0f);
-glm::vec3 cameraTar = glm::vec3(0.0f,0.0f,-1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f,1.0f,0.0f);
-
+//setting the intial state of the mouse to the center of the camera
+float lastX = 400;
+float lastY = 300;
+//initial entry to true
+bool firstEntry = true;
+//first camera offsets 
+float yaw = -90.0f;
+float pitch = 0.0f;
+//
+Camera camera = Camera(cameraPos,cameraUp);
 
 int main(){
     //intalize glfw 
@@ -98,7 +110,7 @@ int main(){
 
     const char* imgPath = "assets/bricks.jpg";
     Texture popCat(imgPath, GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
-	popCat.texUnit(shaderProgram3, "tex0", 0);
+	  popCat.texUnit(shaderProgram3, "tex0", 0);
     popCat.Bind();
 
 
@@ -121,6 +133,9 @@ int main(){
 
     
     glEnable(GL_DEPTH_TEST);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(window, mouse_callback);
     
     while(!glfwWindowShouldClose(window)){
 
@@ -130,7 +145,7 @@ int main(){
         VAO1.Bind();
         model=glm::rotate(model,glm::radians(0.004f),glm::vec3(0.0f,1.0f,0.0f));
         shaderProgram3.setMat4(0,GL_FALSE,model);
-        view=glm::lookAt(cameraPos,cameraPos+cameraTar,cameraUp);
+        view=camera.GetViewMatrix();
         shaderProgram3.setMat4(1,GL_FALSE,view);
         glDrawElements(GL_TRIANGLES,sizeof(indices)/sizeof(int),GL_UNSIGNED_INT,0);
         
@@ -155,20 +170,40 @@ int main(){
 
     return 0;
 }
-void processInput(GLFWwindow *window, float currentFrame)
-{     
-    deltaTime=currentFrame-lastFrame;
-    lastFrame=currentFrame;
-    float cameraSpeed=2.5*deltaTime;
-
-
-    if(glfwGetKey(window,GLFW_KEY_UP)==GLFW_PRESS)
-      cameraPos+=cameraSpeed*cameraTar;
-    if(glfwGetKey(window,GLFW_KEY_DOWN)==GLFW_PRESS)
-      cameraPos-=cameraSpeed*cameraTar;
-    if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-      cameraPos-= glm::normalize(glm::cross(cameraTar, cameraUp)) *cameraSpeed;
-    if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-      cameraPos += glm::normalize(glm::cross(cameraTar, cameraUp)) *cameraSpeed;
-
+void processInput(GLFWwindow* window, float currentTime) {
+    
+    deltaTime =currentTime-lastFrame;
+    lastFrame=currentTime;
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+    //movement in z axis 
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.ProcessKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
+    //movement in x axis
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.ProcessKeyboard(LEFT, deltaTime);
+}
+void mouse_callback(GLFWwindow* window, double xPos, double yPos)
+{
+    const float sensitivity = 0.05f; // Reduced for touchpad
+    if (firstEntry) {
+        lastX = xPos;
+        lastY = yPos;
+        firstEntry = false;
+        return;
+    }
+    float xChange = static_cast<float>(sensitivity * (xPos - lastX));
+    float yChange = static_cast<float>(sensitivity * (lastY - yPos));
+    lastX = xPos;
+    lastY = yPos;
+    //
+    camera.ProcessMouseMovement(xChange, yChange);
+    //
+}
+void framebuffer_size_callback(GLFWwindow* window, int width, int height){
+  glViewport(0,0,width,height);
 }

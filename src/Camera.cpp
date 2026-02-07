@@ -1,7 +1,7 @@
 #include "Camera.h"
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
-    : Front(glm::vec3(0.0f, 0.0f, 1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY) {
+    : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY) {
     Position = position;
     WorldUp = up;
     Yaw = yaw;
@@ -20,7 +20,7 @@ glm::vec3 Camera::getCameraPos()
 }
 
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime) {
-    float velocity = MovementSpeed * deltaTime;
+    float velocity = 2.0f*MovementSpeed * deltaTime;
     if (direction == FORWARD)
         Position += Front * velocity;
     if (direction == BACKWARD)
