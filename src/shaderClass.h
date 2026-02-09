@@ -24,7 +24,7 @@ public:
 	void setInt(const std::string& name, int value) const;
 	void setFloat(const std::string& name, float value) const;
     void setVec3(const std::string& name, glm::vec3 objColor) const;
-	void Shader::setMat4(const GLuint location, GLboolean transpose , glm::mat4 matrix);
+	void setMat4(const GLuint location, GLboolean transpose , glm::mat4 matrix);
 	
 private:
 	void checkCompilationError(unsigned int shader, const std::string& type);

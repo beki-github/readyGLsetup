@@ -5,10 +5,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/executable)
-# creates an empty shader directory inside the executable directory 
-#file(MAKE_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders")
+
 project(test VERSION 1.0)
-# copy the shader folder to the executable folder for portablility IF it doesn't exist there already
+
 
 
 if(WIN32)
@@ -21,7 +20,8 @@ else()
   find_package(OpenGL REQUIRED)
   find_package(GLFW3 REQUIRED)
 endif()
-
+#####******************IMPORTANT****************######
+# don't forget to add header files and sources files as soon as you create them
 add_executable( 
     ${PROJECT_NAME}
     src/shaderClass.h
@@ -42,22 +42,34 @@ add_executable(
     src/Debugger.h
 )
 
-
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/dependencies)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
+#file(MAKE_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders")
+# creates an empty shader directory inside the executable directory 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_CURRENT_SOURCE_DIR}/shaders" 
-    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release/shaders"
+    "$<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders"
     COMMENT "Syncing shaders to executable directory..."
 )
 
-if (WIN32)
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets" 
+    "$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets"
+    COMMENT "Syncing shaders to executable directory..."
+)
+
+if (MSVC)
   target_link_libraries(${PROJECT_NAME} ${GLFW3_LIBRARY} OpenGL::GL)
+elseif(WIN32)
+  target_link_libraries(${PROJECT_NAME} PRIVATE 
+        glfw3
+        opengl32
+    )
 else()
-  # Linux needs extra libraries for X11/Threads
-  target_link_libraries(${PROJECT_NAME} glfw OpenGL::GL X11 pthread dl)
+  target_link_libraries(${PROJECT_NAME} glfw OpenGL::GL X11 pthread dl m)
 endif()
  
 if(WIN32)
